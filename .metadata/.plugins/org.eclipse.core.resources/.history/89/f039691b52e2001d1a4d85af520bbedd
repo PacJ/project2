@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.list.dao.ListDAO">
+	<select id="getTopRatedMovies" resultType="ListDTO">
+		<![CDATA[
+		SELECT a.movie_id, a.title, a.release_date, 
+			   round(a.tmdb_vote_sum, 2) as tmdb_vote_sum, a.tmdb_vote_cnt, a.poster_path
+		FROM (SELECT * 
+			  FROM movie 
+			  WHERE tmdb_vote_cnt >= 100 AND popularity >= 30 AND release_date >= '00/01/01'
+        ORDER BY tmdb_vote_sum DESC) A 
+		WHERE rownum <= 20
+		]]>
+	</select>
+	
+	<select id="getTopRatedClassic" resultType="ListDTO">
+		<![CDATA[
+		SELECT a.movie_id, a.title, a.release_date, 
+				round(a.tmdb_vote_sum, 2) as tmdb_vote_sum, a.tmdb_vote_cnt, a.poster_path
+		FROM (SELECT * 
+        		FROM movie
+        		WHERE tmdb_vote_cnt >= 100 AND popularity >= 30 AND release_date <= '90/01/01'
+        		ORDER BY tmdb_vote_sum DESC) A 
+		WHERE rownum <= 20
+		]]>
+	</select>
+	
+	<select id="SearchMovie" resultType="ListDTO" parameterType="String">
+        SELECT * FROM movie WHERE movie.title LIKE '%%';
+	</select>
+	
+	<select id="SearchActor" resultType="ListDTO" parameterType="String">
+        SELECT * FROM actor WHERE actor.name LIKE '%Keanu%';
+	</select>
+	
+	<select id="SearchDir" resultType="ListDTO" parameterType="String">
+        SELECT * FROM director WHERE director.name LIKE '%Bong%';
+	</select>
+	
+	<!--getTopRatedClassic
+	getTopRatedDirector
+	getTopRatedActor
+	getTopRatedGenre
+	getFavoriteDirector
+	getFavoriteActor
+	getFavoriteGenre-->
+	
+<!--	<select id="getContents" parameterType="int" resultType="ListDTO">
+		SELECT * FROM movie WHERE movie_id = #{movie_id}
+	</select>-->
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

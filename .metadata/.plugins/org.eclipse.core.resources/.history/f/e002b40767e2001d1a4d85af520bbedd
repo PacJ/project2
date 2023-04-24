@@ -1,0 +1,23 @@
+package com.example.list.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.example.actor.dto.ActorDTO;
+import com.example.director.dto.DirectorDTO;
+import com.example.list.dto.ListDTO;
+
+@Mapper
+@Repository
+public interface ListDAO {
+	public List<ListDTO> getTopRatedMovies();
+	public List<ListDTO> getTopRatedClassic();
+	public ListDTO getContents(int movie_id);
+	
+	//검색 영역
+	public List<ListDTO> searchMovies();
+	public List<ActorDTO> searchActors();
+	public List<DirectorDTO> searchDirectors();
+}

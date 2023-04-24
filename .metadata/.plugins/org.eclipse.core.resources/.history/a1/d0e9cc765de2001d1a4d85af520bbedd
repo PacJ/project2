@@ -1,0 +1,54 @@
+package com.example.list.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.actor.dto.ActorDTO;
+import com.example.director.dto.DirectorDTO;
+import com.example.list.dao.ListDAO;
+import com.example.list.dto.ListDTO;
+
+@Service
+public class ListServiceImp implements ListService {
+	
+	@Autowired
+	private ListDAO listDAO;
+	
+	@Override
+	public List<ListDTO> getTopRatedMoviesProcess() {
+		return listDAO.getTopRatedMovies();
+	}
+
+	@Override
+	public List<ListDTO> getTopRatedClassicProcess() {
+		return listDAO.getTopRatedClassic();
+	}
+
+	@Override
+	public ListDTO getContentsProcess(int movie_id) {
+		return listDAO.getContents(movie_id);
+	}
+
+	@Override
+	public List<ListDTO> searchMovies() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ActorDTO> searchActors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<DirectorDTO> searchDirectors() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

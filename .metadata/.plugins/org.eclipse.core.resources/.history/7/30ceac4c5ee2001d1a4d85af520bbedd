@@ -1,0 +1,52 @@
+package com.example.search.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.actor.dto.ActorDTO;
+import com.example.director.dto.DirectorDTO;
+import com.example.list.dto.ListDTO;
+import com.example.list.service.ListService;
+
+@CrossOrigin({"http://localhost:3000"})
+@RestController
+public class searchController {
+
+	@Autowired
+	private ListService listService;
+	
+	public searchController() {
+		
+	}
+	
+	// http://localhost:8090/
+	@GetMapping("/search/{movie_name}")
+	public Map<String, Object> movieExecute(@PathVariable("movie_name") String movie_name) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("searchMovieList", listService.searchMovies());
+		
+		return map;
+	}
+	
+	@GetMapping("/search/{actor_name}")
+	public ActorDTO actorExecute(@PathVariable("actor_name") String actor_name) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("searchActorList", listService.searchActors());
+		
+		return map;
+	}
+	
+	@GetMapping("/search/{director_name}")
+	public DirectorDTO directorExecute(@PathVariable("director_name") String director_name) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("searchMovieList", listService.searchMovies());
+		
+		return map;
+	}
+}
