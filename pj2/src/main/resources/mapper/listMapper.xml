@@ -38,6 +38,22 @@
         SELECT * FROM director WHERE UPPER(name) LIKE '%' || #{query} || '%'
 	</select>
 	
+	<select id="castMovies" resultType="ListDTO" parameterType="String">
+		SELECT DISTINCT MOVIE.*
+		FROM MOVIE
+		INNER JOIN MOVIE_ACTOR ON MOVIE.MOVIE_ID = MOVIE_ACTOR.MOVIE_ID
+		INNER JOIN ACTOR ON MOVIE_ACTOR.ACTOR_ID = ACTOR.ACTOR_ID
+		WHERE ACTOR.ACTOR_ID = #{actor_id}
+	</select>
+	
+	<select id="dirMovies" resultType="ListDTO" parameterType="String">
+		SELECT DISTINCT MOVIE.*
+		FROM MOVIE
+		INNER JOIN MOVIE_DIRECTOR ON MOVIE.MOVIE_ID = MOVIE_DIRECTOR.MOVIE_ID
+		INNER JOIN DIRECTOR ON MOVIE_DIRECTOR.DIRECTOR_ID = DIRECTOR.DIRECTOR_ID
+		WHERE DIRECTOR.DIRECTOR_ID = #{dir_id}
+	</select>
+	
 	<!--getTopRatedClassic
 	getTopRatedDirector
 	getTopRatedActor

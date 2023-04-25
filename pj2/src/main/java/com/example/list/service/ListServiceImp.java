@@ -52,4 +52,14 @@ public class ListServiceImp implements ListService {
 		return listDAO.searchDirectors(query);
 	}
 
+	@Override
+	public List<ListDTO> castMoviesProcess(String actor_id) {
+		return listDAO.castMovies(actor_id);
+	}
+
+	@Override
+	public List<ListDTO> dirMoviesProcess(String dir_id) {
+		return listDAO.dirMovies(dir_id);
+	}
+
 }

@@ -15,4 +15,11 @@ public interface ListService {
 	public List<ListDTO> searchMovies(String query);
 	public List<ActorDTO> searchActors(String query);
 	public List<DirectorDTO> searchDirectors(String query);
+	
+	//출연진 영역
+	//출연 영화
+	public List<ListDTO> castMoviesProcess(String actor_id);
+	
+	//감독 영화
+	public List<ListDTO> dirMoviesProcess(String dir_id);
 }

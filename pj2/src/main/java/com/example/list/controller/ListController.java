@@ -39,4 +39,7 @@ public class ListController {
 		return listService.getContentsProcess(movie_id);
 	}
 	
+//	@GetMapping("/castProfile/{actor_id}")
+//	public 
+	
 }

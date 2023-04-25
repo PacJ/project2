@@ -20,4 +20,12 @@ public interface ListDAO {
 	public List<ListDTO> searchMovies(String query);
 	public List<ActorDTO> searchActors(String query);
 	public List<DirectorDTO> searchDirectors(String query);
+	
+	//출연진 영역
+	
+	//출연 영화
+	public List<ListDTO> castMovies(String actor_id);
+	
+	//감독 영화
+	public List<ListDTO> dirMovies(String dir_id);
 }
