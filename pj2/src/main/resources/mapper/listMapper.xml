@@ -26,27 +26,52 @@
 		]]>
 	</select>
 	
+	<!--영화 제목 검색-->
 	<select id="searchMovies" resultType="ListDTO" parameterType="String">
         SELECT * FROM movie WHERE UPPER(title) LIKE '%' || #{query} || '%' 
 	</select>
 	
+	
+	<!--배우 이름 검색-->
 	<select id="searchActors" resultType="ActorDTO" parameterType="String">
         SELECT * FROM actor WHERE UPPER(name) LIKE '%' || #{query} || '%'
 	</select>
 	
+	<!--감독 이름 검색-->
 	<select id="searchDirectors" resultType="DirectorDTO" parameterType="String">
         SELECT * FROM director WHERE UPPER(name) LIKE '%' || #{query} || '%'
 	</select>
 	
+	<!--검색 자동완성 기능을 위한 모든 선택-->
+	<select id="selectAll" resultType="java.lang.String">
+		(SELECT ACTOR.NAME FROM ACTOR)
+		UNION
+		(SELECT DIRECTOR.NAME FROM DIRECTOR)
+		UNION
+		(SELECT MOVIE.TITLE FROM MOVIE)
+	</select>
+	
+	<!--배우 ID로 ACTOR row 선택(이미지, 이름, ID)-->
 	<select id ="selectByActorId" resultType="ActorDTO" parameterType="String">
 		SELECT * FROM ACTOR
 		WHERE ACTOR.ACTOR_ID IN (
 		SELECT ACTOR_ID
 		FROM MOVIE_ACTOR
 		WHERE ACTOR_ID = #{actor_id}
-		);
+		)
 	</select>
 	
+	<!--감독 ID로 DIRECTOR row 선택(이미지, 이름, ID)-->
+	<select id ="selectByDirId" resultType="DirectorDTO" parameterType="String">
+		SELECT * FROM DIRECTOR
+		WHERE DIRECTOR.DIRECTOR_ID IN (
+		SELECT DIRECTOR_ID
+		FROM MOVIE_DIRECTOR
+		WHERE DIRECTOR_ID = #{dir_id}
+		)
+	</select>
+	
+	<!--배우가 출연한 영화 출력(배우ID값으로 선택)-->
 	<select id="castMovies" resultType="ListDTO" parameterType="String">
 		SELECT DISTINCT MOVIE.*
 		FROM MOVIE
@@ -55,6 +80,7 @@
 		WHERE ACTOR.ACTOR_ID = #{actor_id}
 	</select>
 	
+	<!--감독이 감독한 영화 출력(감독ID값으로 선택)-->
 	<select id="dirMovies" resultType="ListDTO" parameterType="String">
 		SELECT DISTINCT MOVIE.*
 		FROM MOVIE
@@ -62,6 +88,7 @@
 		INNER JOIN DIRECTOR ON MOVIE_DIRECTOR.DIRECTOR_ID = DIRECTOR.DIRECTOR_ID
 		WHERE DIRECTOR.DIRECTOR_ID = #{dir_id}
 	</select>
+	
 	
 	<!--getTopRatedClassic
 	getTopRatedDirector

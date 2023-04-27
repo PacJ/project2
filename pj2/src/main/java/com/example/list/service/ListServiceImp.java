@@ -62,4 +62,19 @@ public class ListServiceImp implements ListService {
 		return listDAO.dirMovies(dir_id);
 	}
 
+	@Override
+	public ActorDTO selectByActorIdProcess(String actor_id) {
+		return listDAO.selectByActorId(actor_id);
+	}
+
+	@Override
+	public DirectorDTO selectByDirIdProcess(String dir_id) {
+		return listDAO.selectByDirId(dir_id);
+	}
+
+	@Override
+	public List<String> selectAllProcess() {
+		return listDAO.selectAll();
+	}
+
 }

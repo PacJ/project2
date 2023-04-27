@@ -21,11 +21,16 @@ public interface ListDAO {
 	public List<ActorDTO> searchActors(String query);
 	public List<DirectorDTO> searchDirectors(String query);
 	
-	//출연진 영역
+	// 배우/감독 정보
+	public ActorDTO selectByActorId(String actor_id);
+	public DirectorDTO selectByDirId(String dir_id);
 	
 	//출연 영화
 	public List<ListDTO> castMovies(String actor_id);
 	
 	//감독 영화
 	public List<ListDTO> dirMovies(String dir_id);
+	
+	//전체선택(자동완성 기능)
+	public List<String> selectAll();
 }
