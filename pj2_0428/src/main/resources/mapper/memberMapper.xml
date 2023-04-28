@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.member.dao.MemberDAO">
+	<!--회원가입-->
+	<insert id="insertMember" parameterType="MemberDTO">
+		<![CDATA[
+		INSERT INTO member(member_id, email, password, name, age, gender, visibility, grade, regdate, nickname)
+		VALUES (member_id_seq.nextval, #{email}, #{password}, #{name}, #{age}, #{gender}, #{visibility}, 6, sysdate, '아무개')
+		]]>
+	</insert>
+	
+	<!--이메일 유효성 검사-->
+	<select id="selectByEmail" parameterType="string" resultType="MemberDTO">
+	  	SELECT * FROM member
+	  	WHERE email = #{email}
+	</select>
+	
+	<!--회원가입 장르 삽입-->
+	<insert id="insertMemGenre" parameterType="MemberGenreDTO">
+		INSERT INTO member_genre(member_id, genre_id)
+		VALUES(#{memberId},#{genreId})
+	</insert>
+	
+	<!--회원정보 수정 > 이름, 비번, 닉네임, 프로필 이미지-->
+	<update id="updateMember" parameterType="MemberDTO">
+	  	UPDATE member
+	  	SET password=#{password}, name=#{name}, nickname=#{nickname}, profile_path=#{profile_path}
+	  	WHERE email=#{email}
+	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updateByPass" parameterType="MemberDTO">
+		UPDATE member
+		SET password=#{password}
+		WHERE email=#{email}
+	</update>
+	
+	<!--마이페이지 > 평가하기-->
+	<select id="printRandom" resultType="ListDTO">
+		<![CDATA[
+		SELECT * FROM 
+			(SELECT * FROM movie ORDER BY dbms_random.value)
+		WHERE ROWNUM BETWEEN 0 AND 4
+		]]>
+	</select>
+	
+	
+</mapper>

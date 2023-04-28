@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.list.dao.ListDAO">
+	
+	<!--메인 화면 리스트-->
+	<select id="getTopRatedMovies" resultType="ListDTO">
+		<![CDATA[
+		SELECT a.movie_id, a.title, a.release_date, 
+			   round(a.tmdb_vote_sum, 2) as tmdb_vote_sum, a.tmdb_vote_cnt, a.poster_path
+		FROM (SELECT * 
+			  FROM movie 
+			  WHERE tmdb_vote_cnt >= 100 AND popularity >= 30 AND release_date >= '00/01/01'
+        ORDER BY tmdb_vote_sum DESC) A 
+		WHERE rownum <= 20
+		]]>
+	</select>
+	
+	<select id="getTopRatedClassic" resultType="ListDTO">
+		<![CDATA[
+		SELECT a.movie_id, a.title, a.release_date, 
+				round(a.tmdb_vote_sum, 2) as tmdb_vote_sum, a.tmdb_vote_cnt, a.poster_path
+		FROM (SELECT * 
+        		FROM movie
+        		WHERE tmdb_vote_cnt >= 100 AND popularity >= 30 AND release_date <= '90/01/01'
+        		ORDER BY tmdb_vote_sum DESC) A 
+		WHERE rownum <= 20
+		]]>
+	</select>
+	
+	<!--getTopRatedClassic
+	getTopRatedDirector
+	getTopRatedActor
+	getTopRatedGenre
+	getFavoriteDirector
+	getFavoriteActor
+	getFavoriteGenre-->
+	
+	
+	
+	
+	<!--검색-->
+	<select id="searchMovies" resultType="ListDTO" parameterType="String">
+        SELECT * FROM movie WHERE UPPER(title) LIKE '%' || #{query} || '%' 
+	</select>
+	
+	<select id="searchActors" resultType="ActorDTO" parameterType="String">
+        SELECT * FROM actor WHERE UPPER(name) LIKE '%' || #{query} || '%'
+	</select>
+	
+	<select id="searchDirectors" resultType="DirectorDTO" parameterType="String">
+        SELECT * FROM director WHERE UPPER(name) LIKE '%' || #{query} || '%'
+	</select>
+	
+	
+	
+	<!--검색 자동완성 기능을 위한 모든 선택-->
+	<select id="selectAll" resultType="java.lang.String">
+		(SELECT ACTOR.NAME FROM ACTOR)
+		UNION
+		(SELECT DIRECTOR.NAME FROM DIRECTOR)
+		UNION
+		(SELECT MOVIE.TITLE FROM MOVIE)
+	</select>
+	
+	<!--배우 ID로 ACTOR row 선택(이미지, 이름, ID)-->
+	<select id ="selectByActorId" resultType="ActorDTO" parameterType="String">
+		SELECT * FROM ACTOR
+		WHERE ACTOR.ACTOR_ID IN (
+		SELECT ACTOR_ID
+		FROM MOVIE_ACTOR
+		WHERE ACTOR_ID = #{actor_id}
+		)
+	</select>
+	
+	<!--감독 ID로 DIRECTOR row 선택(이미지, 이름, ID)-->
+	<select id ="selectByDirId" resultType="DirectorDTO" parameterType="String">
+		SELECT * FROM DIRECTOR
+		WHERE DIRECTOR.DIRECTOR_ID IN (
+		SELECT DIRECTOR_ID
+		FROM MOVIE_DIRECTOR
+		WHERE DIRECTOR_ID = #{dir_id}
+		)
+	</select>
+	
+	<!--배우가 출연한 영화 출력(배우ID값으로 선택)-->
+	<select id="castMovies" resultType="ListDTO" parameterType="String">
+		SELECT DISTINCT MOVIE.*
+		FROM MOVIE
+		INNER JOIN MOVIE_ACTOR ON MOVIE.MOVIE_ID = MOVIE_ACTOR.MOVIE_ID
+		INNER JOIN ACTOR ON MOVIE_ACTOR.ACTOR_ID = ACTOR.ACTOR_ID
+		WHERE ACTOR.ACTOR_ID = #{actor_id}
+	</select>
+	
+	<!--감독이 감독한 영화 출력(감독ID값으로 선택)-->
+	<select id="dirMovies" resultType="ListDTO" parameterType="String">
+		SELECT DISTINCT MOVIE.*
+		FROM MOVIE
+		INNER JOIN MOVIE_DIRECTOR ON MOVIE.MOVIE_ID = MOVIE_DIRECTOR.MOVIE_ID
+		INNER JOIN DIRECTOR ON MOVIE_DIRECTOR.DIRECTOR_ID = DIRECTOR.DIRECTOR_ID
+		WHERE DIRECTOR.DIRECTOR_ID = #{dir_id}
+	</select>
+	
+	
+	
+	<!--영화 컨텐츠 페이지-->
+	<select id="getMovieById" parameterType="int" resultType="ContentsDTO">
+		SELECT movie_id, title, release_date, round(tmdb_vote_sum, 2) as tmdb_vote_sum, overview, poster_path, backdrop_path, country, runtime, original_title
+		FROM movie WHERE movie_id = #{movie_id}
+	</select>
+	
+	<select id="getGenresByMovieId" parameterType="int" resultType="GenreDTO">
+		SELECT *
+		FROM movie_genre mg
+		JOIN genre g ON mg.genre_id = g.genre_id
+		WHERE mg.movie_id = #{movie_id}
+	</select>
+	
+	<select id="getDirectorsByMovieId" parameterType="int" resultType="DirectorDTO">
+		SELECT *
+		FROM director d
+		JOIN movie_director md ON d.director_id = md.director_id
+		WHERE md.movie_id = #{movie_id}
+	</select>
+	
+	<select id="getActorsByMovieId" parameterType="int" resultType="ActorDTO">
+		SELECT *
+		FROM actor a
+		join movie_actor ma ON a.actor_id = ma.actor_id
+		where ma.movie_id = #{movie_id} AND a.profile_path IS NOT NULL
+	</select>
+	
+	<select id="getImagesByMovieId" parameterType="int" resultType="ImagesDTO">
+		SELECT *
+		FROM movie m
+		join movie_images mi ON m.movie_id = mi.movie_id
+		where m.movie_id = #{movie_id}
+	</select>
+	
+	<resultMap id="CommentAndRatingResultMap" type="ReviewDTO">
+		<result property="movie_id" column="movie_id"/>
+		<result property="member_id" column="member_id"/>
+		<result property="content" column="content"/>
+		<result property="rating" column="rating"/>
+		<result property="likes" column="likes"/>
+		<result property="regdate" column="regdate"/>
+		<result property="state" column="state"/>
+	</resultMap>
+	
+	<select id="getReviewsByMovieId"  parameterType="int" resultMap="CommentAndRatingResultMap">
+		SELECT c.movie_id, c.member_id, c.content, COALESCE(r.rating, 0) AS rating, c.likes, c.state, c.regdate
+		FROM comments c
+		LEFT OUTER JOIN rating r ON r.movie_id = c.movie_id AND r.member_id = c.member_id
+		WHERE c.movie_id = #{movie_id}
+		ORDER BY likes DESC
+	</select>
+	
+	<!--사용자가 별점, 코멘트 안남긴 상태에서 코멘트를 추가할 경우-->
+	<insert id="postComment" parameterType="CommentsDTO">
+		insert into comments
+		values (#{movie_id}, #{member_id}, #{content, jdbcType=VARCHAR}, 0, sysdate, sysdate, #{state})
+	</insert>
+	
+	<!--사용자가 별점만 남긴 상태에서 코멘트를 추가할 경우-->
+	<update id="updateComment" parameterType="CommentsDTO">
+		UPDATE comments
+		SET content = #{content}, state = #{state}, moddate = sysdate
+		WHERE movie_id = #{movie_id} AND member_id = #{member_id}
+	</update>
+	
+	<delete id="deleteComment" parameterType="map">
+		DELETE FROM comments
+		WHERE movie_id = #{movie_id} AND member_id = #{member_id}
+	</delete>
+	
+	<!--사용자가 코멘트를 안남긴 상태에서 별점만 추가할 경우-->
+	<insert id="postRating" parameterType="RatingDTO">
+		INSERT INTO rating
+		VALUES (#{movie_id}, #{member_id}, #{rating})
+	</insert>
+	
+	<!--사용자가 별점만 남긴 상태에서 별점만 수정할 경우-->
+	<update id="updateRating" parameterType="RatingDTO">
+		UPDATE rating
+		SET rating = #{rating}
+		WHERE movie_id = #{movie_id} AND member_id = #{member_id}
+	</update>
+	
+	<!--사용자가 이미 남긴 리뷰가 있는지 확인-->
+	<select id="findReviewById" parameterType="map" resultType="ReviewDTO">
+		SELECT c.movie_id, c.member_id, c.content, COALESCE(r.rating, 0) AS rating, c.likes, c.state, c.regdate
+		FROM comments c
+		LEFT OUTER JOIN rating r ON c.movie_id = r.movie_id AND c.member_id = r.member_id
+		WHERE c.movie_id = #{movie_id} AND c.member_id = #{member_id}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
