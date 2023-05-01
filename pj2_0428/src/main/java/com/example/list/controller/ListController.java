@@ -1,8 +1,20 @@
 package com.example.list.controller;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +31,11 @@ import com.example.review.dto.CommentsDTO;
 import com.example.review.dto.RatingDTO;
 import com.example.review.dto.ReviewDTO;
 
-@CrossOrigin({"http://localhost:3000"})
+@CrossOrigin({"*"})
 @RestController
 public class ListController {
+	
+	private static final Map<Integer, String> CACHE = new HashMap<>();
 	
 	@Autowired
 	private ListService listService;
@@ -84,13 +98,67 @@ public class ListController {
 		return listService.findReviewByIdProcess(movie_id, member_id);
 	}
 	
+	// 코사인 유사도를 이용한 회원 시청영화(후기를 남긴 영화) 기반 영화추천(ㅅㅂ)
+	@GetMapping("/recommend")
+	public int recommendMovie(HttpSession session) {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+	    System.out.println("추천영화");
+	    System.out.println(listService.selectLastSeenProcess(1).getTitle());
+	    System.out.println(listService.selectLastSeenProcess(1).getOverView());
+	    ContentsDTO lastMovie = listService.selectLastSeenProcess(1);
+	    System.out.println(lastMovie);
+	    
+	    if(lastMovie != null) {
+	    	System.out.println("영화 뭐봤냐?");
+	    	
+	    		System.out.println(lastMovie.getTitle() + " 봤다새꺄");
+	    	
+	    		
+	    		int movie_id = lastMovie.getMovie_id();
+	    		int result;
+	    		int results[] = null;
+	    	if(CACHE.containsKey(movie_id)) {
+	    		String resultString = CACHE.get(movie_id);
+	    		result = Integer.parseInt(resultString);
+	    		System.out.println("캐시된 결과: " + result);
+	    		String[] dataArray = resultString.split(",");
+	    		results = new int[dataArray.length];
+	    		for(int i = 0; i < dataArray.length; i++) {
+	    			results[i] = Integer.parseInt(dataArray[i]);
+	    		}
+	    	} else {
+	    		try {
+	    			URI uri = new URI("http://localhost:5000/recommendation?movie_id=" + lastMovie.getMovie_id());
+	    			HttpGet httpGet = new HttpGet(uri);
+	    			CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+	    			String responseString = EntityUtils.toString(httpResponse.getEntity());
+	    			System.out.println("Try HttpGet URI");
+	    			httpResponse.close();
+	    			CACHE.put(movie_id, responseString);
+	    		} catch (URISyntaxException e) {
+					System.err.println("잘못된 URI 구문: " + e.getMessage());
+				} catch (IOException e) {
+					System.err.println("I/O 오류 발생: " + e.getMessage());
+				}
+	    	}
+	    	
+//	    	System.out.println(result.getClass().getName());
+	    
+//	    	int[] dataArray = result;
+	    	
+	    	List<ContentsDTO> recList = new ArrayList<ContentsDTO>();
+	    	for(int i = 0; i <= 9; i++) {
+	    		int recId = results[i];
+	    		ContentsDTO movie = listService.movieRecProcess(recId);
+	    		if(movie != null) {
+	    			System.out.println(recId);
+	    			recList.add(movie);
+	    		}
+	    	}
+	    }
+//	    ModelAndView mav = new ModelAndView("recommend");
+//	    mav.addObject("seenMovies", seenMovies);
+	    return 1;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-}
+}//end Controller

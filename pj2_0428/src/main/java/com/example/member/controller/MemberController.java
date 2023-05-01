@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.member.dto.AuthInfo;
 import com.example.member.dto.MemberDTO;
 import com.example.member.dto.MemberGenreDTO;
 import com.example.member.service.MemberService;
 import com.example.common.file.FileUpload;
+import com.example.list.dto.ContentsDTO;
 import com.example.list.dto.ListDTO;
+import com.example.list.service.ListService;
 
 
 @CrossOrigin("*")
@@ -97,6 +101,7 @@ public class MemberController {
 		System.out.println(aList.size());
 		return aList; 
 	}
+
 
 	
 }

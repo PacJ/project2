@@ -37,6 +37,12 @@ public interface ListDAO {
 	//감독 영화
 	public List<ListDTO> dirMovies(String dir_id);
 	
+	//시청 영화(후기를 남긴 영화)
+	public ContentsDTO selectLastSeen(int member_id);
+	
+	//추천 영화 선택(movie_id, 리뷰 없는 row만 출력. Review 있으면 null)
+	public ContentsDTO movieRec(int movie_id);
+	
 	//전체선택(자동완성 기능)
 	public List<String> selectAll();
 	

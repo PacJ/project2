@@ -55,7 +55,7 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests()
 	    .antMatchers("/", "/images/**", "/login", "/register", "/contents/**", "/search/**", 
-	    		"/review", "/analysis/**", "/comment/**", "/actorProfile/**", "/dirProfile/**", "/selectAll").permitAll()
+	    		"/review", "/analysis/**", "/comment/**", "/actorProfile/**", "/dirProfile/**", "/selectAll", "/recommend").permitAll()
 	    .anyRequest().authenticated();
 		
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));

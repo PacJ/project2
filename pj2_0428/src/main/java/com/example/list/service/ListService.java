@@ -33,6 +33,12 @@ public interface ListService {
 	//감독 영화
 	public List<ListDTO> dirMoviesProcess(String dir_id);
 	
+	//시청한 영화(리뷰 남긴 영화)
+	public ContentsDTO selectLastSeenProcess(int member_id);
+	
+	//추천 영화(리뷰를 남기지 않은 영화)
+	public ContentsDTO movieRecProcess(int movie_id);
+	
 	// 영화 상세 페이지
 	public ContentsDTO getContentsProcess(int movie_id);
 	

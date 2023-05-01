@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,6 +129,18 @@ public class ListServiceImp implements ListService {
 		
 		listDAO.deleteComment(map);
 	}
+
+	// 시청한 영화 List
+	@Override
+	public ContentsDTO selectLastSeenProcess(int member_id) {
+		return listDAO.selectLastSeen(member_id);
+	}
+
+	@Override
+	public ContentsDTO movieRecProcess(int movie_id) {
+		return listDAO.movieRec(movie_id);
+	}
+	
 
 
 
