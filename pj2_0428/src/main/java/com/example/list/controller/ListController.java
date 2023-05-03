@@ -103,16 +103,12 @@ public class ListController {
 	public int recommendMovie(HttpSession session) {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 	    System.out.println("추천영화");
-	    System.out.println(listService.selectLastSeenProcess(1).getTitle());
-	    System.out.println(listService.selectLastSeenProcess(1).getOverView());
+//	    System.out.println(listService.selectLastSeenProcess(1).getTitle());
+//	    System.out.println(listService.selectLastSeenProcess(1).getOverView());
 	    ContentsDTO lastMovie = listService.selectLastSeenProcess(1);
 	    System.out.println(lastMovie);
 	    
 	    if(lastMovie != null) {
-	    	System.out.println("영화 뭐봤냐?");
-	    	
-	    		System.out.println(lastMovie.getTitle() + " 봤다새꺄");
-	    	
 	    		
 	    		int movie_id = lastMovie.getMovie_id();
 	    		int result;
@@ -125,16 +121,23 @@ public class ListController {
 	    		results = new int[dataArray.length];
 	    		for(int i = 0; i < dataArray.length; i++) {
 	    			results[i] = Integer.parseInt(dataArray[i]);
+//	    			System.out.println(dataArray[i]);
+//	    			System.out.println(results[i]);
 	    		}
 	    	} else {
 	    		try {
-	    			URI uri = new URI("http://localhost:5000/recommendation?movie_id=" + lastMovie.getMovie_id());
+	    			URI uri = new URI("http://localhost:5000/recommend?movie_id=" + lastMovie.getMovie_id());
+	    			System.out.println(uri);
 	    			HttpGet httpGet = new HttpGet(uri);
+//	    			System.out.println(httpGet);
 	    			CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 	    			String responseString = EntityUtils.toString(httpResponse.getEntity());
-	    			System.out.println("Try HttpGet URI");
+//	    			System.out.println(responseString);
 	    			httpResponse.close();
 	    			CACHE.put(movie_id, responseString);
+	    			for(int i = 0; i <=CACHE.size(); i++) {
+//	    				System.out.println(CACHE.get(responseString) + " " +  CACHE);
+	    			}
 	    		} catch (URISyntaxException e) {
 					System.err.println("잘못된 URI 구문: " + e.getMessage());
 				} catch (IOException e) {
@@ -144,7 +147,7 @@ public class ListController {
 	    	
 //	    	System.out.println(result.getClass().getName());
 	    
-//	    	int[] dataArray = result;
+	    	int[] dataArray = results;
 	    	
 	    	List<ContentsDTO> recList = new ArrayList<ContentsDTO>();
 	    	for(int i = 0; i <= 9; i++) {
@@ -153,6 +156,7 @@ public class ListController {
 	    		if(movie != null) {
 	    			System.out.println(recId);
 	    			recList.add(movie);
+	    			System.out.println("안녕하세요");
 	    		}
 	    	}
 	    }
