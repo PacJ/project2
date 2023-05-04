@@ -12,6 +12,7 @@ import com.example.genre.dto.GenreDTO;
 import com.example.list.dto.ContentsDTO;
 import com.example.list.dto.ImagesDTO;
 import com.example.list.dto.ListDTO;
+import com.example.list.dto.RecommendDTO;
 import com.example.review.dto.CommentsDTO;
 import com.example.review.dto.RatingDTO;
 import com.example.review.dto.ReviewDTO;
@@ -41,7 +42,7 @@ public interface ListDAO {
 	public ContentsDTO selectLastSeen(int member_id);
 	
 	//추천 영화 선택(movie_id, 리뷰 없는 row만 출력. Review 있으면 null)
-	public ContentsDTO movieRec(int movie_id);
+	public RecommendDTO movieRec(int movie_id);
 	
 	//전체선택(자동완성 기능)
 	public List<String> selectAll();

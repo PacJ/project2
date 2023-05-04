@@ -15,6 +15,7 @@ import com.example.director.dto.DirectorDTO;
 import com.example.list.dao.ListDAO;
 import com.example.list.dto.ContentsDTO;
 import com.example.list.dto.ListDTO;
+import com.example.list.dto.RecommendDTO;
 import com.example.review.dto.CommentsDTO;
 import com.example.review.dto.RatingDTO;
 import com.example.review.dto.ReviewDTO;
@@ -137,7 +138,7 @@ public class ListServiceImp implements ListService {
 	}
 
 	@Override
-	public ContentsDTO movieRecProcess(int movie_id) {
+	public RecommendDTO movieRecProcess(int movie_id) {
 		return listDAO.movieRec(movie_id);
 	}
 	

@@ -7,6 +7,7 @@ import com.example.actor.dto.ActorDTO;
 import com.example.director.dto.DirectorDTO;
 import com.example.list.dto.ContentsDTO;
 import com.example.list.dto.ListDTO;
+import com.example.list.dto.RecommendDTO;
 import com.example.review.dto.CommentsDTO;
 import com.example.review.dto.RatingDTO;
 import com.example.review.dto.ReviewDTO;
@@ -37,7 +38,7 @@ public interface ListService {
 	public ContentsDTO selectLastSeenProcess(int member_id);
 	
 	//추천 영화(리뷰를 남기지 않은 영화)
-	public ContentsDTO movieRecProcess(int movie_id);
+	public RecommendDTO movieRecProcess(int movie_id);
 	
 	// 영화 상세 페이지
 	public ContentsDTO getContentsProcess(int movie_id);

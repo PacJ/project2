@@ -120,14 +120,15 @@
 	
 	<!--추천 영화 정보-->
 	<!--movie_id에 해당하는 리뷰 없는 영화 출력.-->
-	<select id="movieRec" parameterType="int" resultType="ContentsDTO" >
+	<select id="movieRec" parameterType="map" resultType="RecommendDTO" >
 		SELECT *
 			FROM movie m
 			WHERE NOT EXISTS (
-			  SELECT 1
+			  SELECT *
 			  FROM review r
 			  WHERE r.movie_id = m.movie_id
 			    AND r.state IN (1, 2, 3, 4)
+                AND r.member_id = #{member_id}
 			)
 			AND m.movie_id = #{movie_id};
 	</select>
