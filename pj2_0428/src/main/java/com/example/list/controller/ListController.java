@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.list.dto.ContentsDTO;
 import com.example.list.dto.RecommendDTO;
@@ -96,46 +99,83 @@ public class ListController {
 	
 	@GetMapping("/comment/{movie_id}/{member_id}")
 	public ReviewDTO getCommentExecute(@PathVariable("movie_id") int movie_id, @PathVariable("member_id") int member_id) {
-		System.out.println("냐냐냐" + movie_id + member_id);
 		return listService.findReviewByIdProcess(movie_id, member_id);
 	}
 	
-	// 코사인 유사도를 이용한 회원 시청영화(후기를 남긴 영화) 기반 영화추천(ㅅㅂ)
-	@PostMapping("/recommend")
-	public List<RecommendDTO> recommendMovie(HttpSession session, @RequestBody String movie_id) {
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-	    System.out.println("추천영화");
-//	    System.out.println(listService.selectLastSeenProcess(1).getTitle());
-//	    System.out.println(listService.selectLastSeenProcess(1).getOverView());
-	    ContentsDTO lastMovie = listService.selectLastSeenProcess(1);
+//	member_id인 사람이 마지막으로 본 영화 기반 추천
+	@GetMapping("/recommend/{member_id}")
+	public List<RecommendDTO> recMovie(@PathVariable("member_id") int member_id) {
+//		int movie_id = 3;
+	    int lastMovie = listService.selectLastSeenProcess(member_id).getMovie_id();
+	    if(lastMovie != 0) {
 	    System.out.println(lastMovie);
-	    System.out.println(movie_id);
-	    System.out.println(movie_id.length());
-	    System.out.println(movie_id.getClass());
-	    String[] idString = movie_id.replaceAll("[^\\d,]","").split(",");
-	    int[] movies = new int[idString.length];
-	    for(int i = 0; i < idString.length; i++) {
-	    	System.out.println(idString[i]);
-	    	movies[i] = Integer.parseInt(idString[i]);
+//		int lastMovie = listService.selectLastSeenProcess(member_id).getMovie_id();
+//	    int movie_id = 3; 
+	    String url = UriComponentsBuilder.fromUriString("http://localhost:5000/recommend")
+	        .queryParam("MOVIE_ID", lastMovie)
+	        .toUriString();
+
+	    RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.getForObject(url, String.class);
+
+	    System.out.println(result);
+	    String[] recMovie = result.replaceAll("[^\\d,]","").split(",");
+	    int[] recMovieId = new int[recMovie.length];
+	    for(int i = 0; i < recMovie.length; i++) {
+	        System.out.println(recMovie[i] + "공백제거함.");
+	        recMovieId[i] = Integer.parseInt(recMovie[i]);
+	        
 	    }
-	    System.out.println(Arrays.toString(movies));
 	    
-	    List<RecommendDTO> recMovies = new ArrayList<RecommendDTO>();
-	    for(int i = 0; i < 9; i++) {
-	    	int recMovieId = movies[i];
-	    	System.out.println(recMovieId);
-	    	RecommendDTO recDto = listService.movieRecProcess(recMovieId);
-	    	if (recDto != null) {
-	    		System.out.println(recMovieId);
-	    		recMovies.add(recDto);
-	    	} else{ 
-	    		System.out.println("이미 본 영화 " + recMovieId);
 	    	
+	    List<RecommendDTO> recList = new ArrayList<RecommendDTO>();
+	    for(int i = 0; i < recMovieId.length; i++) {
+	    	    RecommendDTO rec = listService.selectByIdProcess(recMovieId[i]);
+	    	    recList.add(rec);
+	    	    System.out.println(rec.getTitle());
 	    	}
+	    	return recList;
+
 	    }
-	    System.out.println(recMovies);
-	    
-	    return recMovies;
+//	    return recList;
+	    return null;
+	    }
+
+	
+	// 코사인 유사도를 이용한 회원 시청영화(후기를 남긴 영화) 기반 영화추천(ㅅㅂ)
+//	@PostMapping("/recommend")
+//	public List<RecommendDTO> recommendMovie(HttpSession session, @RequestBody String movie_id) {
+//		CloseableHttpClient httpClient = HttpClients.createDefault();
+//	    System.out.println("추천영화");
+//	    ContentsDTO lastMovie = listService.selectLastSeenProcess(3);
+//	    String[] idString = movie_id.replaceAll("[^\\d,]","").split(",");
+//	    int[] movies = new int[idString.length];
+//	    for(int i = 0; i < idString.length; i++) {
+//	    	System.out.println(idString[i] + "공백 제거 + , 로 분리한 영화");
+//	    	movies[i] = Integer.parseInt(idString[i]);
+//	    }
+//	    System.out.println(Arrays.toString(movies) + "toString");
+//	    
+//	    List<RecommendDTO> recMovies = new ArrayList<RecommendDTO>();
+//	    System.out.println(recMovies.size());
+//	    for(int i = 0; i < 9; i++) {
+//	    	int recMovieId = movies[i];
+//	    	System.out.println(recMovieId + "추천영화[i]");
+//	    	RecommendDTO recDto = listService.movieRecProcess(recMovieId);
+//	    	if (recDto != null) {
+//	    		recMovies.add(recDto);
+//	    		System.out.println(recMovieId + "recMovies에 영화 add" + i);
+//	    	} else{ 
+//	    		System.out.println("이미 본 영화 " + recMovieId);
+//	    	
+//	    	}
+//	    }
+//	    System.out.println(recMovies);
+//	    for(int i = 0; i < 9; i++) {
+//	    	System.out.println(recMovies.get(i).getTitle());
+//	    }
+//	    
+//	    return recMovies;
 //	    if(lastMovie != null) {
 //	    		
 //	    		int movie_id = lastMovie.getMovie_id();
@@ -190,6 +230,6 @@ public class ListController {
 //	    }
 //	    ModelAndView mav = new ModelAndView("recommend");
 //	    mav.addObject("seenMovies", seenMovies);
-	}
 	
+
 }//end Controller

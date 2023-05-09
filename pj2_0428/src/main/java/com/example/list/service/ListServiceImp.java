@@ -141,7 +141,12 @@ public class ListServiceImp implements ListService {
 	public RecommendDTO movieRecProcess(int movie_id) {
 		return listDAO.movieRec(movie_id);
 	}
-	
+
+	@Override
+	public RecommendDTO selectByIdProcess(int member_id) {
+		return listDAO.selectById(member_id);
+	}
+
 
 
 

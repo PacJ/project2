@@ -44,6 +44,9 @@ public interface ListDAO {
 	//추천 영화 선택(movie_id, 리뷰 없는 row만 출력. Review 있으면 null)
 	public RecommendDTO movieRec(int movie_id);
 	
+	//ID로 영화 정보 선택
+	public RecommendDTO selectById(int member_id);
+	
 	//전체선택(자동완성 기능)
 	public List<String> selectAll();
 	

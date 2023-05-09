@@ -101,25 +101,32 @@
 		WHERE DIRECTOR.DIRECTOR_ID = #{dir_id}
 	</select>
 	
+	<!--아이디로 영화 선택-->
+	<select id = "selectById" resultType="RecommendDTO" parameterType="int">
+		SELECT * FROM MOVIE WHERE MOVIE_ID = #{movie_id}
+	</select>
+	
 	<!--가장 최근에 남긴 영화 후기의 영화 정보 가져오기-->
 	<select id="selectLastSeen" resultType="ContentsDTO" parameterType="int">
 		SELECT *
-			FROM (
-			    SELECT m.*, r2.REGDATE
-			    FROM MOVIE m
-			    INNER JOIN (
-			        SELECT MOVIE_ID, MAX(REGDATE) AS latest_review_date
-			        FROM REVIEW
-			        GROUP BY MOVIE_ID
-			    ) r ON m.MOVIE_ID = r.MOVIE_ID
-			    INNER JOIN REVIEW r2 ON r.MOVIE_ID = r2.MOVIE_ID AND r.latest_review_date = r2.REGDATE
-			    ORDER BY r.latest_review_date DESC
-			)
-			WHERE ROWNUM = #{member_id}
+		FROM (
+		    SELECT m.*, r2.REGDATE
+		    FROM MOVIE m
+		    INNER JOIN (
+		        SELECT MOVIE_ID, MAX(REGDATE) AS latest_review_date
+		        FROM REVIEW
+		        WHERE MEMBER_ID = #{member_id}
+		        GROUP BY MOVIE_ID
+		    ) r ON m.MOVIE_ID = r.MOVIE_ID
+		    INNER JOIN REVIEW r2 ON r.MOVIE_ID = r2.MOVIE_ID AND r.latest_review_date = r2.REGDATE
+		    WHERE r2.MEMBER_ID = #{member_id}
+		    ORDER BY r.latest_review_date DESC
+		)
+		WHERE ROWNUM = 1
 	</select>
 	
 	<!--추천 영화 정보-->
-	<!--movie_id에 해당하는 리뷰 없는 영화 출력.-->
+	<!--리뷰를 남기지 않은 영화 영화만 row 선택. 리뷰를 남긴 영화면 선택하기-->
 	<select id="movieRec" parameterType="map" resultType="RecommendDTO" >
 		SELECT *
 			FROM movie m
@@ -130,7 +137,7 @@
 			    AND r.state IN (1, 2, 3, 4)
                 AND r.member_id = #{member_id}
 			)
-			AND m.movie_id = #{movie_id};
+			AND m.movie_id = #{movie_id}
 	</select>
 	
 	
