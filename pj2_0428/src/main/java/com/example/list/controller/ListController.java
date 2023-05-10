@@ -11,11 +11,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -105,21 +100,30 @@ public class ListController {
 //	member_id인 사람이 마지막으로 본 영화 기반 추천
 	@GetMapping("/recommend/{member_id}")
 	public List<RecommendDTO> recMovie(@PathVariable("member_id") int member_id) {
-//		int movie_id = 3;
-	    int lastMovie = listService.selectLastSeenProcess(member_id).getMovie_id();
-	    if(lastMovie != 0) {
-	    System.out.println(lastMovie);
-//		int lastMovie = listService.selectLastSeenProcess(member_id).getMovie_id();
-//	    int movie_id = 3; 
+		
+		//마지막으로 후기 남긴 영화 DTO 가져오기
+		ContentsDTO lastMovie = listService.selectLastSeenProcess(member_id);
+		
+	    if(lastMovie != null) {
+    	int lastMovieId = lastMovie.getMovie_id();
+	    System.out.println(lastMovieId);
+
+	    // Flask url 설정
 	    String url = UriComponentsBuilder.fromUriString("http://localhost:5000/recommend")
-	        .queryParam("MOVIE_ID", lastMovie)
+	        .queryParam("MOVIE_ID", lastMovieId) // 검색할 영화 아이디 값
 	        .toUriString();
 
 	    RestTemplate restTemplate = new RestTemplate();
+	    
+	    // Flask 결과 받아오기
 	    String result = restTemplate.getForObject(url, String.class);
 
 	    System.out.println(result);
+	    
+	    //결과값 편집
 	    String[] recMovie = result.replaceAll("[^\\d,]","").split(",");
+	    
+	    //영화 아이디 배열에 결과 추가
 	    int[] recMovieId = new int[recMovie.length];
 	    for(int i = 0; i < recMovie.length; i++) {
 	        System.out.println(recMovie[i] + "공백제거함.");
@@ -127,7 +131,7 @@ public class ListController {
 	        
 	    }
 	    
-	    	
+	    // 추천 영화 DTO List에 담기(recMovieId에 담긴 영화 id로 선택)
 	    List<RecommendDTO> recList = new ArrayList<RecommendDTO>();
 	    for(int i = 0; i < recMovieId.length; i++) {
 	    	    RecommendDTO rec = listService.selectByIdProcess(recMovieId[i]);

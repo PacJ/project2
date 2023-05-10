@@ -34,6 +34,7 @@ public interface ListService {
 	//감독 영화
 	public List<ListDTO> dirMoviesProcess(String dir_id);
 	
+	//////////////////추가////////////////////////////////
 	//아이디로 영화 검색
 	public RecommendDTO selectByIdProcess(int member_id);
 	
@@ -42,6 +43,7 @@ public interface ListService {
 	
 	//추천 영화(리뷰를 남기지 않은 영화)
 	public RecommendDTO movieRecProcess(int movie_id);
+///////////////////////////////////////////////////////
 	
 	// 영화 상세 페이지
 	public ContentsDTO getContentsProcess(int movie_id);

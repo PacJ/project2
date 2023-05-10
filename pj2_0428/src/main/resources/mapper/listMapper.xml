@@ -106,7 +106,7 @@
 		SELECT * FROM MOVIE WHERE MOVIE_ID = #{movie_id}
 	</select>
 	
-	<!--가장 최근에 남긴 영화 후기의 영화 정보 가져오기-->
+	<!--가장 최근에 남긴 후기의 영화 정보 가져오기-->
 	<select id="selectLastSeen" resultType="ContentsDTO" parameterType="int">
 		SELECT *
 		FROM (
