@@ -112,7 +112,7 @@ public class ListController {
 	    String url = UriComponentsBuilder.fromUriString("http://localhost:5000/recommend")
 	        .queryParam("MOVIE_ID", lastMovieId) // 검색할 영화 아이디 값
 	        .toUriString();
-
+	    System.out.println(url);
 	    RestTemplate restTemplate = new RestTemplate();
 	    
 	    // Flask 결과 받아오기
