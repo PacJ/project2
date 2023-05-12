@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.recommend.dao.RecommendDAO">
+
+	<select id="recentmovies" parameterType="String" resultType="ListDTO">
+		<![CDATA[
+		select * from movie where movie_id in(SELECT movie_id FROM ( SELECT
+		movie_id FROM rating WHERE member_id = #{member_id} ORDER BY regdate DESC ))
+		]]>
+	</select>
+	
+	<select id="getmovie" parameterType="String" resultType="ListDTO">
+		<![CDATA[
+		select * from movie
+		where movie_id=#{movie_id}
+		]]>
+	</select>
+</mapper>
