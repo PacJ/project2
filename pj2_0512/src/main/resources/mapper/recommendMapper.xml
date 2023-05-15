@@ -5,8 +5,11 @@
 
 	<select id="recentmovies" parameterType="String" resultType="ListDTO">
 		<![CDATA[
-		select * from movie where movie_id in(SELECT movie_id FROM ( SELECT
-		movie_id FROM rating WHERE member_id = #{member_id} ORDER BY regdate DESC ))
+		SELECT m.* 
+		FROM movie m 
+		JOIN rating r ON m.movie_id = r.movie_id 
+		WHERE r.member_id = #{member_id}
+		ORDER BY r.regdate DESC
 		]]>
 	</select>
 	

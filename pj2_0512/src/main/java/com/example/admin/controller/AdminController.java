@@ -40,7 +40,7 @@ public class AdminController {
 	private BCryptPasswordEncoder encodePassword;
 
 	public AdminController() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public void setAdminService(AdminService adminService) {
@@ -50,8 +50,6 @@ public class AdminController {
 	// 회원가입처리
 	@PostMapping(value = "/adminregister")
 	public String addMember(@RequestBody AdminDTO adminDTO, HttpSession session) {
-		System.out.println("요청들어옴");
-
 		adminDTO.setPassword(encodePassword.encode(adminDTO.getPassword()));
 		adminService.addAdminProcess(adminDTO);
 
@@ -61,19 +59,16 @@ public class AdminController {
 	// 이메일 중복 확인을 위한 Controller 함수
 	@PostMapping(value = "/admin/idcheck")
 	public int idCheck(@RequestBody String email) {
-		System.out.println("요청들어옴");
 		int result = adminService.idcheckservcie(email.replaceAll("\"",""));  
-		System.out.println("중복확인: "+result);
 		return result;
 	}
  
     //관리자정보 수정
     @PostMapping("/admin/update")//json객체를 java객체로 변환해야하기 때문에 requestbody사용 
-    public void updateAdmin(@RequestBody AdminDTO a) {
-    	System.out.println("요청 들어옴");
-    	System.out.println(a);
-    	System.out.println("이름:" + a.getName());
-    	adminService.updateNameProcess(a);
+    public void updateAdmin(@RequestBody AdminDTO adminDTO) {
+    	System.out.println("이름:" + adminDTO.getName());
+    	adminDTO.setPassword(encodePassword.encode(adminDTO.getPassword()));
+    	adminService.updateNameProcess(adminDTO);
     }
 
     //관리자페이지(댓글 삭제 및 수정 )
@@ -88,15 +83,12 @@ public class AdminController {
    	//신고된 댓글 블러 처리해주기 state2(스포일 신고당한 댓글 )=> state4로 변경(블러 처리가 되어진 스포일 댓글 ) 처리 
     @PutMapping("/blur")
    	public void blurspoiler (@RequestBody ReviewInfoDTO info) {
-    	System.out.println("member"+info.getMember_id());
-    	System.out.println("movie"+info.getMovie_id());
     	adminService.blurSpoilerprocess(info);
   	}
     
     //신고된 댓글 삭제 처리해주기
     @DeleteMapping("/deletereview")
    	public void deletereview (@RequestBody ReviewInfoDTO info) {
-    	System.out.println("d"+info.getMember_id());
     	adminService.deleteReviewprocess(info);
     	//axios 오류가 뜨면 react//adminpage에 있는 axios.@@@@랑 확인해봐야함 같아야 하기 떄문
   	}

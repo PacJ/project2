@@ -3,6 +3,35 @@
 
 <mapper namespace="com.example.analysis.dao.AnalysisDAO">
 
+	<select id="getSimilarMembers" parameterType="int" resultType="similarMemberDTO">
+	  <![CDATA[
+	    WITH member_genres AS (
+	      SELECT m.member_id, m.name, g.name AS genre_name, COUNT(r.rating) AS genreRating_cnt,
+	        ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) AS total,
+	        ROW_NUMBER() OVER (PARTITION BY m.member_id ORDER BY ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) DESC) AS rn
+	      FROM member m
+	      JOIN rating r ON m.member_id = r.member_id
+	      JOIN movie_genre mg ON r.movie_id = mg.movie_id
+	      JOIN genre g ON mg.genre_id = g.genre_id
+	      GROUP BY m.member_id, m.name, g.name
+	    ), member_combinations AS (
+	      SELECT mg1.member_id AS member_id_1, mg2.member_id AS member_id, COUNT(*) AS common_genres
+	      FROM member_genres mg1
+	      JOIN member_genres mg2 ON mg1.member_id <> mg2.member_id
+	        AND (mg1.genre_name = mg2.genre_name OR mg1.genre_name LIKE mg2.genre_name || ',%'
+	            OR mg1.genre_name LIKE '%,' || mg2.genre_name || ',%' OR mg1.genre_name LIKE '%,' || mg2.genre_name)
+	      WHERE mg1.rn <= 5 AND mg2.rn <= 5
+	        AND mg1.member_id = #{member_id}
+	      GROUP BY mg1.member_id, mg2.member_id
+	    )
+	    SELECT m.*, mc.common_genres
+	    FROM member_combinations mc
+	    JOIN member m ON mc.member_id = m.member_id
+	    WHERE m.visibility = 1
+	    ORDER BY mc.common_genres DESC
+  		]]>
+	</select>
+
 
 	<select id="getRatingDistribution" parameterType="int"
 		resultType="AnalysisDTO">
@@ -14,16 +43,22 @@
 	</select>
 
 	<select id="getPreferredGenre" parameterType="int" resultType="AnalysisDTO">
-		SELECT g.name AS genre_name, 
-       COUNT(r.rating) AS genreRating_cnt,
-       ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) AS total,
-       COUNT(r.rating) * ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) AS prefRating
-FROM genre g
-JOIN movie_genre mg ON g.genre_id = mg.genre_id
-JOIN rating r ON r.movie_id = mg.movie_id
-WHERE r.member_id = 3
-GROUP BY g.genre_id, g.name
-ORDER BY PREFRATING DESC
+		SELECT g.name as genre_name, COUNT(r.rating) AS genreRating_cnt,
+		((sum(r.rating) / (COUNT(r.rating) * 5)) * 100) AS total
+		FROM
+		genre g
+		JOIN
+		movie_genre mg ON g.genre_id = mg.genre_id
+		JOIN
+		RATING r ON r.movie_id = mg.movie_id
+		WHERE
+		r.member_id = #{member_id}
+		GROUP BY
+		g.genre_id,
+		g.name
+		ORDER BY
+		total DESC,
+		genreRating_cnt DESC
 
 
 	</select>

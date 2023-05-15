@@ -24,7 +24,8 @@ import com.example.member.dto.MemberDTO;
 import com.example.security.service.PrincipalDetails;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
-	private  MemberDAO userRepository;	
+	private  MemberDAO userRepository;
+//	private boolean filterExecuted = false;
 
 
 	public JwtAuthorizationFilter(AuthenticationManager authManager,MemberDAO userRepository ) {
@@ -37,8 +38,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {		
+//		if(filterExecuted) {
+//			chain.doFilter(request, response);
+//			return;
+//		}
+		
 		System.out.println("인가가 필요한 주소 요청이 실행되는 메소드 : doFilterInternal()");
-
 		//1. 권한이나 인증이 필요한 요청이 전달된다.
 		String jwtHeader = request.getHeader("Authorization"); //Header에 들어 있는 Authorization을 꺼낸다.
 		System.out.println("jwtHeader :" + jwtHeader); 
@@ -70,5 +75,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 		}
 
 		chain.doFilter(request, response);
+//		filterExecuted = true;
 	}
 }//end class

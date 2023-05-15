@@ -22,7 +22,7 @@
 	<!--리뷰 블러 list불러오기 -->
 	<select id="editSpoiler"  resultType="ReviewDTO">
 		select * from comments
-		where state = 2 
+		where state = 4
 	</select>
 
 	<!--리뷰 삭제 list 불러오기  -->
@@ -44,8 +44,8 @@
 	<update id="blurSpoiler" parameterType="ReviewInfoDTO">
 	<!--블러 처리할 스포일 댓글 editSpoiler 상태는 2로 분류 되는데 신고당하면 4로 분류해서 댓글을 블러 처리 되어 있게 해야한다 그래서 업데이트문 작성-->
 		UPDATE comments
-		SET STATE = 4
-		WHERE MOVIE_ID = #{movie_id} AND MEMBER_ID = #{member_id} AND STATE = 2
+		SET STATE = 2
+		WHERE MOVIE_ID = #{movie_id} AND MEMBER_ID = #{member_id} AND STATE = 4
  	<!--한 영화당 리뷰를 하나 달수 있는데 멤버 아이디와 무비 아이디를 변수로 줘야 한다(변동가능하니까 위에선 걍 무비 아이디, 멤버 아이디로 넣어줌 )-->
  	</update>
 

@@ -25,7 +25,15 @@ import com.example.wish.dto.WishDTO;
 @Repository
 public interface ListDAO {
 	public List<ListDTO> getTopRatedMovies();
-	public List<ListDTO> getTopRatedClassic();
+	public List<ListDTO> getTopRated();
+	public List<ListDTO> getLatestMovies();
+	public List<ListDTO> getThemeMovies();
+	public List<ListDTO> getTopRatedDirector();
+	public List<ListDTO> getTopRatedActor();
+	
+	public List<ListDTO> getFavoriteGenre(int member_id);
+	public List<ListDTO> getFavoriteDirector();
+	public List<ListDTO> getFavoriteActor();
 	
 	//검색 영역
 	public List<ListDTO> searchMovies(String query);
@@ -62,6 +70,7 @@ public interface ListDAO {
 	public List<ImagesDTO> getImagesByMovieId(int movie_id);
 	public List<ReviewDTO> getReviewsByMovieId(int movie_id);
 	public List<ListDTO> getSimilarMovies(int movie_id);
+	public String getTrailerByMovieId(int movie_id);
 	
 	// review > comment, rating
 	public void postComment(CommentsDTO comment);
@@ -72,7 +81,9 @@ public interface ListDAO {
 	public void deleteRating(Map<String, Object> map);
 	public ReviewDTO findReviewById(Map<String, Object> map);
 	
-	public ListDTO calculateRating(int movie_id);
+	// 부귀영화 평점 업데이트
+	public Map<String, Object> calculateRating(int movie_id);
+	public void updateMovieRating(ListDTO list);
 	
 	// wish
 	public WishDTO findWishById(Map<String, Object> map);
@@ -84,11 +95,9 @@ public interface ListDAO {
 	public void postLikes(LikesDTO likes);
 	public void incrementLikesById(CommentsDTO comment);
 	public void incrementLikesCountById(int member_id);
-	
 	public void deleteLikes(LikesDTO likes);
 	public void decrementLikesById(CommentsDTO comment);
 	public void decrementLikesCountById(int member_id);
-	
 	public void updateGradeById(MemberDTO member);
 	public MemberDTO findMemberById(int member_id);
 	

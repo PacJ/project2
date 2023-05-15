@@ -73,6 +73,9 @@ public class MemberController {
 	@PostMapping("/profile/update")
 	public void updateMember(@RequestBody MemberDTO memberDTO, HttpServletRequest request) {
 		System.out.println(memberDTO.getPassword());
+		System.out.println(memberDTO.getName());
+		System.out.println(memberDTO.getEmail());
+		System.out.println(memberDTO.getNickname());
 		memberDTO.setPassword(encodePassword.encode(memberDTO.getPassword()));
 		memberService.updateMemberProcess(memberDTO);
 	}

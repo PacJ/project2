@@ -1,6 +1,7 @@
 package com.example.list.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.example.actor.dto.ActorDTO;
 import com.example.director.dto.DirectorDTO;
@@ -16,7 +17,14 @@ import com.example.wish.dto.WishDTO;
 
 public interface ListService {
 	public List<ListDTO> getTopRatedMoviesProcess();
-	public List<ListDTO> getTopRatedClassicProcess();
+	public List<ListDTO> getTopRatedProcess();
+	public List<ListDTO> getLatestMoviesProcess();
+	public List<ListDTO> getThemeMoviesProcess();
+	public List<ListDTO> getTopRatedDirectorProcess();
+	public List<ListDTO> getTopRatedActorProcess();
+	public List<ListDTO> getFavoriteGenreProcess(int member_id);
+	public List<ListDTO> getFavoriteDirectorProcess();
+	public List<ListDTO> getFavoriteActorProcess();
 	
 	// 검색 영역
 	public List<ListDTO> searchMovies(String query);
@@ -56,8 +64,7 @@ public interface ListService {
 	public void updateRatingProcess(RatingDTO rating);
 	public void deleteRatingProcess(int movie_id, int member_id);
 	public ReviewDTO findReviewByIdProcess(int movie_id, int member_id);
-	
-	
+		
 	// wish
 	public WishDTO findWishByIdProcess(int movie_id, int member_id);
 	public void postWishProcess(WishDTO wish);

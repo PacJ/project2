@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.list.dto.ContentsDTO;
+import com.example.list.dto.ListDTO;
 import com.example.list.dto.RecommendDTO;
 import com.example.list.service.ListService;
 import com.example.review.dto.CommentsDTO;
@@ -46,7 +47,23 @@ public class ListController {
 	public Map<String, Object> listExecute() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("topRatedList", listService.getTopRatedMoviesProcess());
-		map.put("topRatedClassic", listService.getTopRatedClassicProcess());
+		map.put("topRated", listService.getTopRatedProcess());
+		map.put("latestMovies", listService.getLatestMoviesProcess());
+		map.put("themeMovies", listService.getThemeMoviesProcess());
+		map.put("topRatedDirector", listService.getTopRatedDirectorProcess());
+		map.put("topRatedActor", listService.getTopRatedActorProcess());
+		
+		return map;
+	}
+	
+	// 사용자 선호장르 리스트
+	@GetMapping("/favoriteGenre/{member_id}")
+	public  Map<String, Object> favoriteListExecute(@PathVariable("member_id") int member_id) {
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("favoriteGenre", listService.getFavoriteGenreProcess(member_id));
+//		map.put("favoriteDirector", listService.getFavoriteDirectorProcess());
+//		map.put("favoriteActor", listService.getFavoriteActorProcess());
 		
 		return map;
 	}
@@ -62,7 +79,7 @@ public class ListController {
 
 		if (lastMovie != null) {
 			int lastMovieId = lastMovie.getMovie_id();
-			System.out.println(lastMovieId);
+//			System.out.println(lastMovieId);
 
 			// Flask url 설정
 			String url = UriComponentsBuilder.fromUriString("http://localhost:5000/recommend")
@@ -74,7 +91,7 @@ public class ListController {
 			// Flask 결과 받아오기
 			String result = restTemplate.getForObject(url, String.class);
 
-			System.out.println(result);
+//			System.out.println(result);
 
 			// 결과값 편집
 			String[] recMovie = result.replaceAll("[^\\d,]", "").split(",");
@@ -82,7 +99,7 @@ public class ListController {
 			// 영화 아이디 배열에 결과 추가
 			int[] recMovieId = new int[recMovie.length];
 			for (int i = 0; i < recMovie.length; i++) {
-				System.out.println(recMovie[i] + "공백제거함.");
+//				System.out.println(recMovie[i] + "공백제거함.");
 				recMovieId[i] = Integer.parseInt(recMovie[i]);
 
 			}
@@ -91,7 +108,7 @@ public class ListController {
 			for (int i = 0; i < recMovieId.length; i++) {
 				RecommendDTO rec = listService.selectByIdProcess(recMovieId[i]);
 				recList.add(rec);
-				System.out.println(rec.getTitle());
+//				System.out.println(rec.getTitle());
 			}
 			return recList;
 		}
@@ -127,6 +144,8 @@ public class ListController {
 	public void postRatingExecute(@RequestBody RatingDTO rating) {
 		listService.postRatingProcess(rating);
 	}
+	
+	
 	
 	@PutMapping("/rating")
 	public void updateRatingExecute(@RequestBody RatingDTO rating) {

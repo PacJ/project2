@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.analysis.dao.AnalysisDAO;
 import com.example.analysis.dto.AnalysisDTO;
+import com.example.analysis.dto.SimilarMemberDTO;
 import com.example.list.dao.ListDAO;
+import com.example.member.dto.MemberDTO;
 
 @Service
 public class AnalysisServiceImp implements AnalysisService{
@@ -36,6 +38,11 @@ public class AnalysisServiceImp implements AnalysisService{
 	@Override
 	public List<AnalysisDTO> getPreferredActorProcess(int member_id) {
 		return analysisDAO.getPreferredActor(member_id);
+	}
+
+	@Override
+	public List<SimilarMemberDTO> getSimilarMembers(int member_id) {
+		return analysisDAO.getSimilarMembers(member_id);
 	}
 
 	

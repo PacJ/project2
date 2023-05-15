@@ -34,6 +34,8 @@ public class ContentsDTO {
 	private String country;
 	private int runtime;
 	
+	private String trailerPath;
+	
 	// actor, director, genre, image, review, list 들어가야함
 	private List<ActorDTO> actorDTO;
 	private List<DirectorDTO> directorDTO;

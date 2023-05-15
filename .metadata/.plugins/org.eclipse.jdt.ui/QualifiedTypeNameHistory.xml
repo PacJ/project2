@@ -33,9 +33,17 @@
     <fullyQualifiedTypeName name="org.springframework.web.client.RestTemplate"/>
     <fullyQualifiedTypeName name="org.springframework.web.util.UriComponentsBuilder"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
-    <fullyQualifiedTypeName name="java.util.List"/>
     <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.PathVariable"/>
     <fullyQualifiedTypeName name="com.example.list.dto.RecommendDTO"/>
     <fullyQualifiedTypeName name="com.example.list.dto.ContentsDTO"/>
     <fullyQualifiedTypeName name="recommend.service.RecommendService"/>
+    <fullyQualifiedTypeName name="com.example.analysis.dto.AnalysisDTO"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="com.example.member.dto.MemberDTO"/>
+    <fullyQualifiedTypeName name="lombok.Getter"/>
+    <fullyQualifiedTypeName name="lombok.Setter"/>
+    <fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
+    <fullyQualifiedTypeName name="lombok.NoArgsConstructor"/>
+    <fullyQualifiedTypeName name="com.example.analysis.dto.similarMemberDTO"/>
+    <fullyQualifiedTypeName name="com.example.analysis.dto.SimilarMemberDTO"/>
 </qualifiedTypeNameHistroy>

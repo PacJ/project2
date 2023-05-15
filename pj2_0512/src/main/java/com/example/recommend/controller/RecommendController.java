@@ -31,21 +31,21 @@ public class RecommendController {
 	public RecommendController() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	@PostMapping("/abc")
 	public Map<String, Object> recommend(@RequestBody String member_id) {
-		System.out.println("recommend 페이지");
+//		System.out.println("recommend 페이지");
 		Map<String, Object> resultMap = new HashMap<>();
 		List<ListDTO> aList = recommendService.recentmoviesProcess(member_id);
 		List<Integer> array=new ArrayList<Integer>();
-		System.out.println(aList.size());
+//		System.out.println(aList.size());
 		
 		for (int i = 0; i < 3; i++) {
 			System.out.println(aList.get(i).getTitle());
 			array.add(aList.get(i).getMovie_id());
 		}
 		
-		System.out.println("array"+array.toString());
+//		System.out.println("array"+array.toString());
 		String url = "http://localhost:5000/abc/"+member_id+"/"+array.toString();
 
 		// RestTemplate 생성
@@ -64,7 +64,7 @@ public class RecommendController {
 		List<Integer> titleSim=null;
 		List<Integer> userRecommend=null;
 		// 응답 본문 출력
-		System.out.println(response.getBody());
+//		System.out.println(response.getBody());
 		String json = response.getBody();
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode rootNode;
@@ -93,14 +93,14 @@ public class RecommendController {
 		List<ListDTO> uRecommend=new ArrayList<ListDTO> ();
 		
 		for (int i =0; i < 10;i++) {
-			System.out.println();
+//			System.out.println();
 			a=recommendService.getmovieProcess(recommendByGenre.get(i).toString());
 			rbGenre.add(a);
 			b=recommendService.getmovieProcess(titleSim.get(i).toString());
 			tSim.add(b);
 			c=recommendService.getmovieProcess(userRecommend.get(i).toString());
 			uRecommend.add(c);
-			System.out.println(a+","+b+","+c);
+//			System.out.println(a+","+b+","+c);
 		}
 		resultMap.put("recommendByGenre", rbGenre);
 		resultMap.put("titleSim", tSim);

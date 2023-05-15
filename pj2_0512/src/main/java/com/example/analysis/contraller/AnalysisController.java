@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.analysis.dto.AnalysisDTO;
+import com.example.analysis.dto.SimilarMemberDTO;
 import com.example.analysis.service.AnalysisService;
+import com.example.member.dto.MemberDTO;
 
 @CrossOrigin("*")
 @RestController
@@ -35,6 +37,11 @@ public class AnalysisController {
 		int save[] = new int[10];
 
 		List<AnalysisDTO> alist = analysisService.getRatingDistributionProcess(member_id);
+		List<SimilarMemberDTO> simMemberList = analysisService.getSimilarMembers(member_id); 
+//		System.out.println(simPersonList.get(0).getEmail());
+		for(int g = 0; g < simMemberList.size(); g++) {
+			System.out.println(simMemberList.get(g).getCommon_genres());
+		}
 
 		for (AnalysisDTO dto : alist) {
 
@@ -61,6 +68,7 @@ public class AnalysisController {
 		}
 		
 		map.put("ratingDistribution", save);
+		map.put("simMemberList", simMemberList);
 		map.put("preferredGenre", analysisService.getPreferredGenreProcess(member_id));
 		map.put("preferredDirector", analysisService.getPreferredDirectorProcess(member_id));
 		map.put("preferredActor", analysisService.getPreferredActorProcess(member_id).subList(0,10));

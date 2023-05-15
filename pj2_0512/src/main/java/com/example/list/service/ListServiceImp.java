@@ -1,5 +1,6 @@
 package com.example.list.service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,47 @@ public class ListServiceImp implements ListService {
 	}
 
 	@Override
-	public List<ListDTO> getTopRatedClassicProcess() {
-		return listDAO.getTopRatedClassic();
+	public List<ListDTO> getTopRatedProcess() {
+		return listDAO.getTopRated();
 	}
+	
+
+	@Override
+	public List<ListDTO> getLatestMoviesProcess() {
+		return listDAO.getLatestMovies();
+	}
+
+	@Override
+	public List<ListDTO> getThemeMoviesProcess() {
+		return listDAO.getThemeMovies();
+	}
+
+	@Override
+	public List<ListDTO> getTopRatedDirectorProcess() {
+		return listDAO.getTopRatedDirector();
+	}
+
+	@Override
+	public List<ListDTO> getTopRatedActorProcess() {
+		return listDAO.getTopRatedActor();
+	}
+
+	@Override
+	public List<ListDTO> getFavoriteGenreProcess(int member_id) {
+		return listDAO.getFavoriteGenre(member_id);
+	}
+
+	@Override
+	public List<ListDTO> getFavoriteDirectorProcess() {
+		return listDAO.getFavoriteDirector();
+	}
+
+	@Override
+	public List<ListDTO> getFavoriteActorProcess() {
+		return listDAO.getFavoriteActor();
+	}
+	
+	
 	
 	
 	// 검색 영역
@@ -111,6 +150,7 @@ public class ListServiceImp implements ListService {
 		contents.setImagesDTO(listDAO.getImagesByMovieId(movie_id));
 		contents.setReviewDTO(listDAO.getReviewsByMovieId(movie_id));
 		contents.setListDTO(listDAO.getSimilarMovies(movie_id));
+		contents.setTrailerPath(listDAO.getTrailerByMovieId(movie_id));
 		return contents;
 	}
 	
@@ -155,13 +195,14 @@ public class ListServiceImp implements ListService {
 	@Transactional
 	public void postRatingProcess(RatingDTO rating) {
 		listDAO.postRating(rating);
-		ListDTO list = listDAO.calculateRating(rating.getMovie_id());
+		updateMovieRatingProcess(rating.getMovie_id());
 	}
 
 	@Override
 	@Transactional
 	public void updateRatingProcess(RatingDTO rating) {
 		listDAO.updateRating(rating);
+		updateMovieRatingProcess(rating.getMovie_id());
 	}
 	
 	@Override
@@ -172,8 +213,27 @@ public class ListServiceImp implements ListService {
 		map.put("member_id", member_id);
 		
 		listDAO.deleteRating(map);
+		updateMovieRatingProcess(movie_id);
 	}
 	
+	private void updateMovieRatingProcess(int movie_id) {
+		Map<String, Object> map = listDAO.calculateRating(movie_id);
+		ListDTO list = new ListDTO();
+		list.setMovie_id(movie_id);
+		
+		if(map.get("VOTE_SUM") != null && map.get("VOTE_CNT") != null) {
+	        BigDecimal voteSumDecimal = (BigDecimal) map.get("VOTE_SUM");
+	        BigDecimal voteCntDecimal = (BigDecimal) map.get("VOTE_CNT");
+
+	        list.setVote_cnt(voteCntDecimal.intValue());
+	        list.setVote_sum(voteSumDecimal.doubleValue());
+	    } else {
+	        list.setVote_cnt(0);
+	        list.setVote_sum(0.0);
+	    }
+		
+		listDAO.updateMovieRating(list);
+	}
 	
 
 	
@@ -322,6 +382,7 @@ public class ListServiceImp implements ListService {
 		
 		listDAO.postFavorite(map);
 	}
+
 
 
 }

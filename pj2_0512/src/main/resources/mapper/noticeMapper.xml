@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.notice.dao.NoticeDAO">
+
+	<insert id="updateNotice">
+		INSERT INTO notice (notice_id, admin_id, title, regdate, content, upload)
+		VALUES (notice_id_seq.nextval,#{admin_id}, #{title},SYSDATE, #{content}, #{upload})
+	</insert>
+	
+	<select id="selectByTitle" parameterType="String">
+		select * from notice
+		where title=#{title}
+	</select>
+	
+	<select id="selectAll" resultType="NoticeDTO">
+		select * from notice
+		order by notice_id desc
+	</select>
+
+	<select id="selectByNoticeId" parameterType="String" resultType="NoticeDTO">
+		select * from notice
+		where notice_id=#{notice_id}
+	</select>
+	
+	<update id="editNotice" parameterType="NoticeDTO">
+		UPDATE notice
+		SET title = #{title},
+		content= #{content},
+		upload = #{upload},
+		regdate = sysdate
+		WHERE notice_id = #{notice_id}
+	</update>
+	
+	<delete id="deleteNotice" parameterType="String">
+		DELETE FROM notice WHERE notice_id = #{notice_id}
+	</delete>
+	
+</mapper>
