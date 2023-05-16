@@ -18,4 +18,5 @@ public class SimilarMemberDTO {
 	private int grade;
 	private int visibility;
 	private int common_genres;
+	private String profile_path;
 }

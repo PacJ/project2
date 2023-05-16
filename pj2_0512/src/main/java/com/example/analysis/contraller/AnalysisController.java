@@ -37,10 +37,13 @@ public class AnalysisController {
 		int save[] = new int[10];
 
 		List<AnalysisDTO> alist = analysisService.getRatingDistributionProcess(member_id);
+		
+		//나의 상위 5장르 중 다른 유저의 상위 5장르와 일치하는 수의 내림순으로 유저 출력
+		//추가
 		List<SimilarMemberDTO> simMemberList = analysisService.getSimilarMembers(member_id); 
 //		System.out.println(simPersonList.get(0).getEmail());
 		for(int g = 0; g < simMemberList.size(); g++) {
-			System.out.println(simMemberList.get(g).getCommon_genres());
+			System.out.println(simMemberList.get(g).getProfile_path());
 		}
 
 		for (AnalysisDTO dto : alist) {
@@ -68,6 +71,7 @@ public class AnalysisController {
 		}
 		
 		map.put("ratingDistribution", save);
+		//추가
 		map.put("simMemberList", simMemberList);
 		map.put("preferredGenre", analysisService.getPreferredGenreProcess(member_id));
 		map.put("preferredDirector", analysisService.getPreferredDirectorProcess(member_id));

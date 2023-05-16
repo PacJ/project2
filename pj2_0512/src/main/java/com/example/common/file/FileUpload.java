@@ -19,7 +19,7 @@ public class FileUpload {
 		//난수값을 발생하여 "난수값_파일명"을 urlPath첨부파일이 저장될 위치에 저장한다.
 		//File ff = new File(urlPath(request), random + "_" + fileName);
 		//File ff = new File(filePath, random + "_" + fileName);
-		File ff = new File("C:/Users/yeommy/Documents/GitHub/final_project/frontend/myapp/public/profiles/" + random + "_" + fileName);
+		File ff = new File("D:/k_digital/jp/project2_front/myapp_230515/public/profiles/" + random + "_" + fileName);
 		
 		try {
 			FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(ff));
@@ -35,7 +35,7 @@ public class FileUpload {
 //		System.out.println("root : " + root);
 //		String saveDirectory = root + "temp" + File.separator; //첨부파일 저장 위치 경로
 		
-		String saveDirectory = "C:/Users/yeommy/Documents/GitHub/final_project/frontend/myapp/public/profiles/";
+		String saveDirectory = "D:/k_digital/jp/project2_front/myapp_230515/public/profiles/";
 		
 		File fe = new File(saveDirectory); //첨부파일이 저장될 위치에 temp폴더가 없을 경우 temp폴더를 생성한다.
 		if(!fe.exists())
