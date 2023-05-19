@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.login.dao.LoginDAO">
+
+	<select id="loginAdmin" parameterType="string" resultType="AdminDTO">
+		SELECT * FROM admin
+		WHERE email = #{email}
+	</select>
+	
+	<select id="loginUser" parameterType="string" resultType="MemberDTO">
+	  	SELECT * FROM member
+	  	WHERE email = #{email}
+	</select>
+
+</mapper>

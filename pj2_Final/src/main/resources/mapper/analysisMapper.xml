@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.analysis.dao.AnalysisDAO">
+
+	<select id="getSimilarMembers" parameterType="int" resultType="similarMemberDTO">
+	  <![CDATA[
+        	WITH member_genres AS (
+			  SELECT m.member_id, m.name, m.Email, g.name AS genre_name, COUNT(r.rating) AS genreRating_cnt,
+			    ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) AS total,
+			    ROW_NUMBER() OVER (PARTITION BY m.member_id ORDER BY ((SUM(r.rating) / (COUNT(r.rating) * 5)) * 100) DESC) AS rn
+			  FROM member m
+			  JOIN rating r ON m.member_id = r.member_id
+			  JOIN movie_genre mg ON r.movie_id = mg.movie_id
+			  JOIN genre g ON mg.genre_id = g.genre_id
+			  GROUP BY m.member_id, m.name, m.Email, g.name
+			), member_combinations AS (
+			  SELECT mg1.member_id AS member_id_1, mg2.member_id AS member_id, COUNT(*) AS common_genres
+			  FROM member_genres mg1
+			  JOIN member_genres mg2 ON mg1.member_id <> mg2.member_id
+			    AND (mg1.genre_name = mg2.genre_name OR mg1.genre_name LIKE mg2.genre_name || ',%'
+			        OR mg1.genre_name LIKE '%,' || mg2.genre_name || ',%' OR mg1.genre_name LIKE '%,' || mg2.genre_name)
+			  WHERE mg1.rn <= 5 AND mg2.rn <= 5
+			    AND mg1.member_id = #{member_id}
+			  GROUP BY mg1.member_id, mg2.member_id
+			)
+			SELECT m.*, mc.common_genres
+			FROM member_combinations mc
+			JOIN member m ON mc.member_id = m.member_id
+			WHERE m.visibility = 1 AND m.Email IS NOT NULL
+			ORDER BY mc.common_genres DESC
+  		]]>
+	</select>
+
+	<select id="getRatingDistribution" parameterType="int"
+		resultType="AnalysisDTO">
+		select rating, count(*) as rating_cnt
+		from RATING
+		where member_id = #{member_id}
+		group by rating
+		order by rating
+	</select>
+
+	<select id="getPreferredGenre" parameterType="int" resultType="AnalysisDTO">
+		SELECT g.name as genre_name, COUNT(r.rating) AS genreRating_cnt,
+		((sum(r.rating) / (COUNT(r.rating) * 5)) * 100) AS total
+		FROM
+		genre g
+		JOIN
+		movie_genre mg ON g.genre_id = mg.genre_id
+		JOIN
+		RATING r ON r.movie_id = mg.movie_id
+		WHERE
+		r.member_id = #{member_id}
+		GROUP BY
+		g.genre_id,
+		g.name
+		ORDER BY
+		total DESC,
+		genreRating_cnt DESC
+
+
+	</select>
+
+	<select id="getPreferredDirector" parameterType="int" resultType="AnalysisDTO">
+		SELECT D.NAME AS DIRECTOR_NAME, D.PROFILE_PATH AS DIRECTOR_IMAGE,
+		COUNT(R.RATING) AS directorRating_cnt, ((SUM(R.RATING) /
+		(COUNT(R.RATING) * 5)) * 100) AS TOTAL
+		FROM MOVIE_DIRECTOR MD
+		JOIN DIRECTOR D ON MD.DIRECTOR_ID = D.DIRECTOR_ID
+		JOIN MOVIE M ON MD.MOVIE_ID = M.MOVIE_ID
+		JOIN RATING R ON M.MOVIE_ID = R.MOVIE_ID
+		WHERE R.MEMBER_ID = #{member_id}
+		GROUP BY D.NAME, D.PROFILE_PATH
+		ORDER BY TOTAL DESC, directorRating_cnt DESC
+	</select>
+
+	<select id="getPreferredActor" parameterType="int" resultType="AnalysisDTO">
+		SELECT A.NAME AS ACTOR_NAME, A.PROFILE_PATH AS ACTOR_IMAGE,
+		COUNT(R.RATING) AS actorRating_cnt, ((SUM(R.RATING) /
+		(COUNT(R.RATING) * 5)) * 100) AS TOTAL
+		FROM MOVIE_ACTOR MD
+		JOIN ACTOR A ON MD.ACTOR_ID = A.ACTOR_ID
+		JOIN MOVIE M ON MD.MOVIE_ID = M.MOVIE_ID
+		JOIN RATING R ON M.MOVIE_ID = R.MOVIE_ID
+		WHERE R.MEMBER_ID = #{member_id}
+		AND A.PROFILE_PATH is not null
+		GROUP BY A.NAME, A.PROFILE_PATH
+		ORDER BY TOTAL DESC, actorRating_cnt DESC
+	</select>
+
+</mapper>

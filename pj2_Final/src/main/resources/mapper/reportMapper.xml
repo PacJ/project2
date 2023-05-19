@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.report.dao.ReportDAO">
+
+	<select id="printReport" resultType="ReportDTO">
+		SELECT comments.*, movie.title, member.nickname
+		FROM comments
+		JOIN movie ON comments.movie_id = movie.movie_id
+		JOIN member ON comments.member_id = member.member_id
+		WHERE comments.state != 1
+
+	</select>
+	
+	
+	<delete id="deleteReport" parameterType="ReviewInfoDTO">
+		DELETE FROM comments
+		where movie_id=#{movie_id} AND member_id=#{member_id} 
+	</delete>
+	
+	
+	<update id="spoiler" parameterType="ReviewInfoDTO">
+		UPDATE comments
+		SET STATE = 2
+		WHERE MOVIE_ID = #{movie_id} AND MEMBER_ID = #{member_id} AND STATE = 4	
+		
+	</update>
+		<update id="returnReport" parameterType="ReviewInfoDTO">
+		UPDATE comments
+		SET STATE = 1
+		WHERE MOVIE_ID = #{movie_id} AND MEMBER_ID = #{member_id} AND STATE !=2	
+		
+	</update>
+	
+</mapper>
